@@ -1,53 +1,62 @@
 #!/bin/bash
 
 # CipherSpend Railway Deployment Script
-# This script starts both the backend (FastAPI) and frontend (React/Vite) services
+# Starts backend and frontend in one Railway service.
 
-set -e
+set -euo pipefail
 
-echo "🚀 Starting CipherSpend on Railway..."
+echo "Starting CipherSpend on Railway..."
 
-# Color codes for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Install backend dependencies
-echo -e "${BLUE}📦 Installing backend dependencies...${NC}"
-cd backend
-pip install --no-cache-dir -r requirements.txt
-cd ..
+PYTHON_BIN="$(command -v python3 || command -v python || true)"
+if [ -z "$PYTHON_BIN" ]; then
+  echo "Error: Python runtime not found. Ensure Railway includes Python in this service."
+  exit 1
+fi
 
-# Install frontend dependencies
-echo -e "${BLUE}📦 Installing frontend dependencies...${NC}"
-cd frontend
-npm install --ci
-cd ..
+if ! "$PYTHON_BIN" -m pip --version >/dev/null 2>&1; then
+  echo "Error: pip is not available for $PYTHON_BIN."
+  exit 1
+fi
 
-# Start backend in the background
-echo -e "${BLUE}🔧 Starting backend (FastAPI on port 8000)...${NC}"
-cd backend
-uvicorn main:app --host 0.0.0.0 --port 8000 &
+echo -e "${BLUE}Installing backend dependencies...${NC}"
+(
+  cd backend
+  "$PYTHON_BIN" -m pip install --no-cache-dir -r requirements.txt
+)
+
+echo -e "${BLUE}Installing frontend dependencies...${NC}"
+(
+  cd frontend
+  npm ci
+)
+
+BACKEND_PORT=8000
+FRONTEND_PORT="${PORT:-3000}"
+
+echo -e "${BLUE}Starting backend on ${BACKEND_PORT}...${NC}"
+(
+  cd backend
+  "$PYTHON_BIN" -m uvicorn main:app --host 0.0.0.0 --port "${BACKEND_PORT}"
+) &
 BACKEND_PID=$!
-cd ..
 
-# Give backend time to start
 sleep 3
 
-# Start frontend build and serve
-echo -e "${BLUE}🎨 Building and starting frontend...${NC}"
-cd frontend
-npm run build
-npm run preview -- --host 0.0.0.0 --port 5173 &
+echo -e "${BLUE}Building and starting frontend on ${FRONTEND_PORT}...${NC}"
+(
+  cd frontend
+  npm run build
+  npm run preview -- --host 0.0.0.0 --port "${FRONTEND_PORT}"
+) &
 FRONTEND_PID=$!
-cd ..
 
-echo -e "${GREEN}✅ CipherSpend is running!${NC}"
-echo -e "${GREEN}Frontend: http://0.0.0.0:5173${NC}"
-echo -e "${GREEN}Backend API: http://0.0.0.0:8000${NC}"
+echo -e "${GREEN}CipherSpend started.${NC}"
+echo -e "${GREEN}Frontend: http://0.0.0.0:${FRONTEND_PORT}${NC}"
+echo -e "${GREEN}Backend: http://0.0.0.0:${BACKEND_PORT}${NC}"
 
-# Handle graceful shutdown
-trap "echo 'Shutting down...'; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null || true" SIGTERM SIGINT
-
-# Wait for both processes
+trap 'echo "Shutting down..."; kill $BACKEND_PID $FRONTEND_PID 2>/dev/null || true' SIGTERM SIGINT
 wait
