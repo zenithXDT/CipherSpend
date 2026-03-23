@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKER"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+numReplicas = 1
+
+[env]
+PORT = "80"
