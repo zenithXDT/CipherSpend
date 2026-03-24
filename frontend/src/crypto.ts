@@ -1,3 +1,5 @@
+import { apiUrl } from '@/lib/api';
+
 let seal: any;
 let context: any;
 let publicKey: any;
@@ -127,7 +129,7 @@ export async function generateVault(passphrase: string): Promise<{ salt: string,
   // Sync context
   try {
     const parmsBase64 = parms.saveToBase64(seal.ComprModeType.none);
-    await fetch('http://localhost:8000/api/context', {
+    await fetch(apiUrl('/api/context'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contextBase64: parmsBase64 })

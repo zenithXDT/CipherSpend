@@ -4,6 +4,7 @@ import { ShieldPlus, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { SUPPORTED_CURRENCIES, type SupportedCurrency, getCurrencySymbol } from '@/lib/currency';
 import { getDefaultCurrency } from '@/lib/preferences';
+import { apiUrl } from '@/lib/api';
 
 export interface ExpenseRecord {
   id: string;
@@ -158,8 +159,8 @@ export const AddExpenseForm: React.FC<{
         };
         fetch(
           editExpense
-            ? `http://localhost:8000/api/expenses/${editExpense.id}`
-            : 'http://localhost:8000/api/expenses',
+            ? apiUrl(`/api/expenses/${editExpense.id}`)
+            : apiUrl('/api/expenses'),
           {
             method: editExpense ? 'PUT' : 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },

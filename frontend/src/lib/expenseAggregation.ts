@@ -1,3 +1,5 @@
+import { apiUrl } from '@/lib/api';
+
 export interface EncryptedExpenseRow {
   category: string;
   amountCiphertext: string;
@@ -12,7 +14,7 @@ export async function fetchAndDecryptExpenseAggregates(
   token: string,
   decryptAmount: (ciphertextBase64: string) => number
 ): Promise<DecryptedAggregation> {
-  const res = await fetch('http://localhost:8000/api/expenses', {
+  const res = await fetch(apiUrl('/api/expenses'), {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) {

@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { KeyRound, ShieldAlert, DownloadCloud, ArrowLeft, Copy, Settings2 } from 'lucide-react';
 import { SUPPORTED_CURRENCIES, type SupportedCurrency } from '@/lib/currency';
 import { getDefaultCurrency, setDefaultCurrency } from '@/lib/preferences';
+import { apiUrl } from '@/lib/api';
 
 /* ── Shared primitives (mirrors rest of suite) ── */
 
@@ -243,7 +244,7 @@ export default function Settings() {
     if (!token) return;
     const id = toast.loading('Fetching encrypted data…');
     try {
-      const res = await fetch('http://localhost:8000/api/expenses', {
+      const res = await fetch(apiUrl('/api/expenses'), {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

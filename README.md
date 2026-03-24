@@ -124,7 +124,7 @@ npm run dev
 
 ## Environment Notes
 
-- The frontend currently calls backend APIs at `http://localhost:8000`.
+- The frontend reads backend base URL from `frontend/.env` (`VITE_BACKEND_API_URL`) and defaults to `http://localhost:8000` if unset.
 - For production-like static serving, Nginx SPA fallback is configured so routes like `/dashboard` and `/settings` work on refresh.
 - `seal_throws.wasm` and related public assets are served from `frontend/public`.
 

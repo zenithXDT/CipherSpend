@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { generateVault, unlockVault, encryptAmount, decryptAmount, reWrapSecretKey } from '../crypto';
+import { apiUrl } from '@/lib/api';
 
 interface CryptoContextType {
   isCryptoReady: boolean;
@@ -40,7 +41,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const { salt, pk, wrapped_sk } = await generateVault(passphrase);
     
     // 2. Register user on backend
-    const regRes = await fetch('http://localhost:8000/api/users/register', {
+    const regRes = await fetch(apiUrl('/api/users/register'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -67,7 +68,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     formData.append('username', userEmail);
     formData.append('password', passphrase);
 
-    const loginRes = await fetch('http://localhost:8000/api/token', {
+    const loginRes = await fetch(apiUrl('/api/token'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData.toString()
@@ -94,7 +95,7 @@ export const CryptoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!token) throw new Error("Not authenticated");
     const { newWrappedSk, newSalt } = await reWrapSecretKey(newPassphrase);
     
-    const res = await fetch('http://localhost:8000/api/users/key', {
+    const res = await fetch(apiUrl('/api/users/key'), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

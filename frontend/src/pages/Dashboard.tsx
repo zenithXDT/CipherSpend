@@ -13,6 +13,7 @@ import { DownloadCloud, LogOut, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { SUPPORTED_CURRENCIES, type SupportedCurrency } from '@/lib/currency';
 import { getDefaultCurrency } from '@/lib/preferences';
+import { apiUrl } from '@/lib/api';
 
 const TotalDisplay = lazy(() => import('@/components/dashboard/TotalDisplay').then((m) => ({ default: m.TotalDisplay })));
 const AnalyticsCharts = lazy(() => import('@/components/dashboard/AnalyticsCharts').then((m) => ({ default: m.AnalyticsCharts })));
@@ -154,7 +155,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!token) return;
-    fetch('http://localhost:8000/api/expenses', {
+    fetch(apiUrl('/api/expenses'), {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -195,7 +196,7 @@ export default function Dashboard() {
   const handleDeleteExpense = async (expenseId: string) => {
     if (!token) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/expenses/${expenseId}`, {
+      const res = await fetch(apiUrl(`/api/expenses/${expenseId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

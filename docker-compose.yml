@@ -3,6 +3,7 @@ services:
     build:
       context: .\backend
       dockerfile: Dockerfile
+    image: isuruzenith/cipherspend-backend:latest
     container_name: cipherspend-backend
     ports:
       - "8000:8000"
@@ -14,6 +15,7 @@ services:
     build:
       context: .\frontend
       dockerfile: Dockerfile
+    image: isuruzenith/cipherspend-frontend:latest
     container_name: cipherspend-frontend
     depends_on:
       - backend
