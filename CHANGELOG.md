@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/Isuruzenith/CipherSpend/compare/v1.2.1...v1.2.2) (2026-03-24)
+
+
+### Bug Fixes
+
+* Update API calls to use dynamic backend URL from environment var… ([c5d1f64](https://github.com/Isuruzenith/CipherSpend/commit/c5d1f646f6c9964c5a50520a2d6bddbd30be81f1))
+* Update API calls to use dynamic backend URL from environment variables ([11006b7](https://github.com/Isuruzenith/CipherSpend/commit/11006b763586da14ca5e94c0aaa4b71a0aeb8c49))
+
 ## [1.2.1](https://github.com/Isuruzenith/CipherSpend/compare/v1.2.0...v1.2.1) (2026-03-23)
 
 
